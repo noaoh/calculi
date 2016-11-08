@@ -1,4 +1,3 @@
-#Class Calculi
 $symbol_table = {'numbers' => [1,2,3,4,5,6,7,8,9], 'operators' => ['+', '-', '*', '/', '^', '%', '>', '<']}
 $infix_operator_precendence = {'+' => 2, '-' => 2, '*' => 3, '/' => 3, '^' => 4, '(' => 5, ')' => 5}
 
@@ -48,39 +47,53 @@ class String
         end
 end
 
-def lisp_parse(string)
-        array = string.split(' ')
-        array = array.map{|x| is_numeric?(x) == false && x.length > 1 ? x.split('') : x}.flatten
-        array = array.map{|x| is_numeric?(x) != false ? x.to_f : x}
-end
-
-def math_notation_parse(string)
-        array = string.split(' ')
-        array.map{|x| is_numeric?(x) != false ? x.to_f : x}
-end
-
-def math_notation_indices_finder(array)
-        operator_indices = array.length.times.select{|i| $symbol_table['operators'].include?(array[i])}.reverse
-end
-
-def lisp_indices_finder(array)
-        array.length.times.select{|i| array[i] == "(" || array[i] == ")"}
-end
-
-
-def math_notation_eval(array, type, operator_indices)
-        num_elements = {"pn" => 3, "rpn" => -3} 
-        operator_indices.map{|i| array.insert(i, eval_subarray_executor(array.slice!(i, num_elements[type]), type))}
-        return array[0]
-end
-
-def lisp_eval(array, type, operator_indices)
-        parenthesis_pairs = []
-        while operator_indices.length > 0
-                parenthesis_pairs.unshift(operator_indices.shift, operator_indices.pop)
+class Lisp
+        def initialize(string, type)
+                @string = string
+                @type = type
         end
-        parenthesis_pairs.map{|l, r| array.insert(l, eval_subarray_executor(array.slice!(array[l..r])))}
-end        
+
+        def parse
+                @array = @string.split(' ')
+                @array = @array.map{|x| is_numeric?(x) == false && x.length > 1 ? x.split('') : x}.flatten
+                @array = @array.map{|x| is_numeric?(x) != false ? x.to_f : x}
+        end
+
+        def indices_finder
+                @indices = array.length.times.select{|i| array[i] == "(" || array[i] == ")"}
+        end
+
+        def eval
+                @parenthesis_pairs = []
+                while @indices.length > 0
+                        @parenthesis_pairs.unshift(@indices.shift, @indices.pop)
+                end
+                @parenthesis_pairs.map{|l, r| @array.insert(l, eval_subarray_executor(@array.slice!(@array[l..r])))}
+        end        
+end
+
+class Math-Notation 
+        def initialize(string, type)
+                @string = string
+                @type = type
+                @num_elements = {"pn" => 3, "rpn" => -3}
+        end
+
+        def parse
+                @array = @string.split(' ')
+                @array = @array.map{|x| is_numeric?(x) != false ? x.to_f : x}
+        end
+
+        def indices_finder
+                @indices = @array.length.times.select{|i| $symbol_table['operators'].include?(@array[i])}.reverse 
+        end
+
+        def eval
+                @indices.map{|i| @array.insert(i, eval_subarray_executor(@array.slice!(i, num_elements[type]), type))}
+                return @array[0]
+        end
+end
+
 
 def eval_subarray_executor(array, type)
         case type
