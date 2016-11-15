@@ -1,4 +1,11 @@
 class Calculi
+        attr_accessor :string
+        attr_accessor :type
+        #right now array and indices disappear after being evaluated
+        attr_accessor :array
+        attr_accessor :indices
+        attr_accessor :result
+
         def initialize(string, type)
                 @string = string
                 @type = type
@@ -25,9 +32,9 @@ class Calculi
         def eval
                 case @type
                 when 'pn' || 'rpn'
-                        MathNotation.new(@string, @type).eval
+                        @result = MathNotation.new(@string, @type).eval
                 when 'lisp' || 'reverse-lisp'
-                        Lisp.new(@string, @type).eval
+                        @result = Lisp.new(@string, @type).eval
                 end
         end
 end
@@ -45,6 +52,12 @@ class String
 end
 
 class Lisp
+        attr_accessor :string
+        attr_accessor :type
+        attr_accessor :array
+        attr_accessor :indices
+        attr_accessor :result
+
         def initialize(string, type)
                 @string = string
                 @type = type
@@ -76,7 +89,7 @@ class Lisp
         def indices_finder
                 self.parse
                 @indices = @array.length.times.select{|i| @array[i] == "(" || @array[i] == ")"}
-                @parenthesis_pairs = []
+                @@parenthesis_pairs = []
                 while @indices.length > 0
                         @parenthesis_pairs.unshift([@indices.shift, @indices.pop])
                 return @parenthesis_pairs
@@ -91,11 +104,18 @@ class Lisp
                         when 'reverse-lisp'
                                 @parenthesis_pairs.map{|l, r| @array.insert(r, execute(@array.slice!(l..r)))}
                         end
-                return @array[0]
+                @result = @array[0]
+                return @result
         end        
 end
 
 class MathNotation 
+        attr_accessor :string
+        attr_accessor :type
+        attr_accessor :array
+        attr_accessor :indices
+        attr_accessor :result
+
         def initialize(string, type)
                 @string = string
                 @type = type
@@ -133,14 +153,15 @@ class MathNotation
         end                
 
         def indices_finder
+                self.parse
                 @indices = @array.length.times.select{|i| @symbol_table['operators'].include?(@array[i])}.reverse 
         end
 
         def eval
-                self.parse
                 self.indices_finder
                 @indices.map{|i| @array.insert(i, execute(@array.slice!(i, @num_elements[@type])))}
-                return @array[0]
+                @result = @array[0]
+                return @result
         end
 end
 
