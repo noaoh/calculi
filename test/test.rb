@@ -7,14 +7,15 @@ class TestLisp < Minitest::Test
                 @Lisp = Lisp.new("(/ 4 (+ 3 (- 2 1)))", "lisp")
         end
 
+        def test_type_access
+                assert_equal("lisp", @CalculiLisp.type)
+                assert_equal("lisp", @Lisp.type)
+        end
+
         def test_string_access
                 assert_equal("(/ 4 (+ 3 (- 2 1)))", @CalculiLisp.string)
                 assert_equal("(/ 4 (+ 3 (- 2 1)))", @Lisp.string)
                 assert_equal(@CalculiLisp.string, @Lisp.string)
-        end
-
-        def test_type_access
-                assert_equal("lisp", @CalculiLisp.type)
         end
 
         def test_string_gets_parsed
@@ -47,8 +48,6 @@ class TestLisp < Minitest::Test
                 assert_equal(@CalculiLisp.result, @Lisp.result)
         end
 end
-
-
 
 class TestReverseLisp < Minitest::Test
         def setup
@@ -96,6 +95,7 @@ class TestReverseLisp < Minitest::Test
                 assert_equal(@CalculiReverseLisp.result, @ReverseLisp.result)
         end
 end
+
 class TestPN < Minitest::Test
         def setup
                 @CalculiPN = Calculi.new("/ + - 2 1 3 4", "pn")
