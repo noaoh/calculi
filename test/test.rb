@@ -1,9 +1,9 @@
-require_relative "lib/calculi"
+require_relative "../lib/calculi"
 require "minitest/autorun"
 
 class TestLisp < Minitest::Test
         def setup
-                @CalculiLisp = Calculi.new("(/ 4 (+ 3 (- 2 1)))", "lisp")
+                @CalculiLisp = Calculi.new("(/ 4 (+ 3 (- 2 1)))", "lisp") 
                 @Lisp = Lisp.new("(/ 4 (+ 3 (- 2 1)))", "lisp")
         end
 
@@ -77,7 +77,6 @@ class TestReverseLisp < Minitest::Test
         end
 
         def test_indices_finder
-[[10, 6], [11, 4], [12, 0]]
                 assert_equal([[10, 6], [11, 4], [12, 0]], @CalculiReverseLisp.indices_finder)
                 assert_equal([[10, 6], [11, 4], [12, 0]], @ReverseLisp.indices_finder)
                 assert_equal(@CalculiReverseLisp.indices_finder, @ReverseLisp.indices_finder)
@@ -120,8 +119,8 @@ class TestPN < Minitest::Test
         end
 
         def test_indices_finder
-                assert([0,1,2], @CalculiPN.indices_finder)
-                assert([0,1,2], @PN.indices_finder)
+                assert_equal([0,1,2], @CalculiPN.indices_finder)
+                assert_equal([0,1,2], @PN.indices_finder)
         end
 
         def test_indices_access

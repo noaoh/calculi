@@ -15,7 +15,7 @@ class Calculi
                 case @type
                 when 'pn' || 'rpn'
                         @array = MathNotation.new(@string, @type).parse
-                when 'lisp' || 'reverse_lisp'
+                when 'lisp' || 'reverse-lisp'
                         @array = Lisp.new(@string, @type).parse
                 end
         end
@@ -61,6 +61,8 @@ class Lisp
         def initialize(string, type)
                 @string = string
                 @type = type
+                @array = self.parse
+                @indices = self.indices_finder
         end
 
         def parse
@@ -168,5 +170,9 @@ end
 class REPL
         def initialize(prompt)
                 @prompt = prompt
+        end
+
+        def read(data)
+                puts 
         end
 end
