@@ -1,6 +1,7 @@
 require 'optparse'
 require 'pry'
 require_relative 'shunting_yard'
+require_relative 'repl'
 
 def parse(string)
         # First regex puts a space after a parenthesis/math operation,
@@ -9,7 +10,6 @@ def parse(string)
         # Third regex converts any double spaces into single space
         # Fourth regex converts to the exponent operator used in ruby
         # split seperates the characters based on a space
-        #
 
         op_re = Regexp.new(/([^\d\w\s\-])/)
         dig_op_re = Regexp.new(/\d[^\d\w\s]+/)
@@ -137,22 +137,43 @@ class MathNotation
         end
 end
 
-type = "lisp"
-string = "( - ( + ( / 18 ( ^ 3 2 ) ) 12 ) 13 )"
-@Lisp = Lisp.new(string,type)
+options = {}
+OptionParser.new do |opts|
+        opts.banner = "Usage: calculi.rb [options]"
+        opts.on("-t","--type TYPE",String,"The type of expression to be computed") do |type|
+                options[:type] = type
+        end
 
-type = "reverse-lisp"
-string = "( 13 ( 12 ( ( 2 3 ^ ) 18 / ) + ) - )"
-@ReverseLisp = Lisp.new(string,type)
+        opts.on("-e","--expr EXPR",String,"The expression to be computed") do |expr|
+                options[:expr] = expr
+        end
+        opts.on("-f","--file FILE",String,"Reads expressions from a file") do |file|
+                options[:file] = file
+        end
+        opts.on("-h","--help","Prints this help") do
+                puts opts
+        end
+end.parse!
 
-type = "pn"
-string = "- + / 18 ^ 3 2 12 13"
-@PN = MathNotation.new(string,type)
+def cli_eval(string,type)
+        case type
+        when 'lisp' || 'reverse-lisp' || 'reverse'
+                cli = Lisp.new(string,type)
+                return "#{cli.string} = #{cli.result}"
+        when 'rpn' || 'postfix' || 'pn' || 'prefix' || 'infix'
+                cli = MathNotation.new(string,type)
+                return "#{cli.string} = #{cli.result}"
+        end
+end
 
-type = "rpn"
-string = "12 18 3 2 ^ / 13 - +"
-@RPN = MathNotation.new(string,type)
-
-type = "infix"
-string = "12 + 18 / ( 3 ^ 2 ) - 13"
-@Infix = MathNotation.new(string,type)
+if not options.empty?
+        if options.has_key?(:file)
+                File.open(options[:file]).each_line do |line|
+                        puts(cli_eval(line,options[:type]))
+                end
+        else
+                puts(cli_eval(options[:expr],options[:type]))
+        end
+else
+        Repl.new("=> ","infix")
+end
