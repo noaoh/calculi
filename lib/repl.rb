@@ -73,6 +73,8 @@ class Repl
                                 return puts("History is now blank")
                         end
 
+                elsif input == "exit" or input == "quit" or STDIN.getch == "\u0003"
+                        puts("Exiting calculi!")
                 else 
                         if @type == 'lisp' or @type == 'reverse-lisp' or @type == 'reverse'
                                output = puts("#{Lisp.new(input,@type).string} : #{Lisp.new(input,@type).result}")
@@ -94,12 +96,14 @@ class Repl
                 end
         end
 
-        def calculi_loop(prompt,input="Welcome to calculi!")
-                puts input
-                until input == "exit" or input == 'quit' or STDIN.getch == "\u0003"
-                        input = calculi_prompt('No input found',prompt)
+        def calculi_loop(prompt,output="Welcome to calculi!")
+                input = nil
+                while output != 'Exiting calculi!'
+                        puts(output)
+                        print(prompt)
+                        input = gets.chomp
+                        output = repl_eval(input)
                 end
-                puts "Exiting calculi"
                 exit(1)
         end
 end
