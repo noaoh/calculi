@@ -6,7 +6,7 @@ def shunting_yard(infix_array)
         op_stack = []
 
         infix_array.each do |item|
-                if operators.has_keys?(item)
+                if operators.has_key?(item)
                         op2 = op_stack.last
                         if operators.has_key?(op2) and ((op2 == "**" and operators[item] < operators[op2]) or (op2 != "**" and operators[item] <= operators[op2]))
                                 rpn_expr.push(op_stack.pop)
