@@ -36,14 +36,15 @@ class Repl
                         input_array = input.split(' ')
 
                         if input_array[1] == "prompt" and input_array.last != "prompt"
-                                @prompt = "[#{@history.length}]" + input_array.last + " "
-                                return puts("prompt now is #{@prompt}")
+                                @og_prompt = input_array.last
+                                @prompt = "[#{@history.length}]" + @og_prompt + " "
+                                return "prompt is now #{@prompt}"
 
                         elsif input_array[1] == "type" and input_array.last != "type"
                                 @type = input_array.last        
-                                return puts("type now is #{@type}")
+                                return "type is now #{@type}"
                         else
-                                puts "Error: variable can not be changed"
+                                return "Error: variable can not be changed"
                         end
 
                 # If input is simply history, print all of the history
@@ -58,7 +59,7 @@ class Repl
                                 input_array = input.split(' ')
                                 input_range = input_array[-1]
                                 if input_range.length == 1
-                                        return puts(@history[input_range.to_i])
+                                        return @history[input_range.to_i]
                                 elsif input_range.length == 4
                                         return calculi_print(@history[(input_range.chars.first.to_i)..(input_range.chars.last.to_i)])
                                 elsif input_range.length == 5
@@ -72,23 +73,24 @@ class Repl
                                 return clear_screen()
                         elsif input == "clear history"
                                 @history = []
-                                return puts("History is now blank")
+                                return "History is now blank"
                         end
 
-                elsif input == "exit" or input == "quit" or STDIN.getch == "\u0003"
-                        return puts("Exiting calculi!")
+                elsif input == "exit" or input == "quit"
+                        return "Exiting calculi!"
+
                 else 
                         if @type == 'lisp' or @type == 'reverse-lisp' or @type == 'reverse'
-                               calculi_output = "#{Lisp.new(input,@type).string} : #{Lisp.new(input,@type).result}"
+                               repl_class = Lisp.new(input,@type)
+                               calculi_output = "#{repl_class.string} : #{repl_class.result}"
                                @history.push(calculi_output)
-                               binding.pry
-                               return puts(calculi_output)
+                               return calculi_output
                                        
                         elsif @type == 'postfix' or @type == 'infix' or @type == 'prefix' or @type == 'pn' or @type == 'rpn'
-                               calculi_output = "#{MathNotation.new(input,@type).string} : #{MathNotation.new(input,@type).result}"
+                               repl_class = MathNotation.new(input,@type)
+                               calculi_output = "#{repl_class.string} : #{repl_class.result}"
                                @history.push(calculi_output)
-                               binding.pry
-                               return puts(calculi_output)
+                               return calculi_output
                        end
                 end
         end
@@ -102,6 +104,7 @@ class Repl
                         input = gets.chomp
                         output = repl_eval(input)
                 end
+                puts(output)
                 exit(1)
         end
 end
