@@ -1,5 +1,6 @@
 require 'IO/console'
 require 'os'
+require 'pry'
 
 class Repl
         attr_accessor :history
@@ -7,10 +8,11 @@ class Repl
         attr_accessor :type
         def initialize(prompt,type)
                 @history = []
-                @prompt = "[#{@history.length}]" + prompt + " "
+                @og_prompt = prompt
+                @prompt = "[#{@history.length}]" + @og_prompt + " "
                 @type = type
                 clear_screen()
-                calculi_loop(@prompt)
+                calculi_loop()
         end
 
         def clear_screen
@@ -34,7 +36,7 @@ class Repl
                         input_array = input.split(' ')
 
                         if input_array[1] == "prompt" and input_array.last != "prompt"
-                                prompt = input_array.last
+                                @prompt = "[#{@history.length}]" + input_array.last + " "
                                 return puts("prompt now is #{@prompt}")
 
                         elsif input_array[1] == "type" and input_array.last != "type"
@@ -74,33 +76,29 @@ class Repl
                         end
 
                 elsif input == "exit" or input == "quit" or STDIN.getch == "\u0003"
-                        puts("Exiting calculi!")
+                        return puts("Exiting calculi!")
                 else 
                         if @type == 'lisp' or @type == 'reverse-lisp' or @type == 'reverse'
-                               output = puts("#{Lisp.new(input,@type).string} : #{Lisp.new(input,@type).result}")
+                               calculi_output = "#{Lisp.new(input,@type).string} : #{Lisp.new(input,@type).result}"
+                               @history.push(calculi_output)
+                               binding.pry
+                               return puts(calculi_output)
+                                       
                         elsif @type == 'postfix' or @type == 'infix' or @type == 'prefix' or @type == 'pn' or @type == 'rpn'
-                               output = puts("#{MathNotation.new(input,@type).string} : #{MathNotation.new(input,@type).result}")
-                       @history.push(output)
-                       return output
+                               calculi_output = "#{MathNotation.new(input,@type).string} : #{MathNotation.new(input,@type).result}"
+                               @history.push(calculi_output)
+                               binding.pry
+                               return puts(calculi_output)
                        end
                 end
         end
 
-        def calculi_prompt(default,*args)
-                print(*args)
-                result = gets.strip
-                if result.empty?
-                        return default
-                else
-                        return repl_eval(result)
-                end
-        end
-
-        def calculi_loop(prompt,output="Welcome to calculi!")
+        def calculi_loop(output="Welcome to calculi!")
                 input = nil
-                while output != 'Exiting calculi!'
+                while output != "Exiting calculi!"
                         puts(output)
-                        print(prompt)
+                        @prompt = "[#{@history.length}]" + @og_prompt + " "
+                        print(@prompt)
                         input = gets.chomp
                         output = repl_eval(input)
                 end
