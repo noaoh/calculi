@@ -1,7 +1,8 @@
+#!/usr/bin/env ruby
 require 'optparse'
-require_relative 'lisp'
-require_relative 'math'
-require_relative 'repl'
+require_relative '../lib/lisp'
+require_relative '../lib/math'
+require_relative '../lib/repl'
 
 options = {}
 OptionParser.new do |opts|
@@ -10,7 +11,7 @@ OptionParser.new do |opts|
                 options[:type] = type
         end
 
-        opts.on("-e","--expr EXPR",String,"The expression to be computed") do |expr|
+        opts.on("-e","--expr EXPR","The expression to be computed") do |expr|
                 options[:expr] = expr
         end
         opts.on("-f","--file FILE",String,"Reads expressions from a file") do |file|
@@ -22,13 +23,14 @@ OptionParser.new do |opts|
 end.parse!
 
 def cli_eval(string,type)
-        case type
-        when 'lisp' || 'reverse-lisp' || 'reverse'
+        if type == 'lisp' or type ==  'reverse-lisp' or type == 'reverse'
                 cli = Lisp.new(string,type)
-                return "#{cli.string} = #{cli.result}"
-        when 'rpn' || 'postfix' || 'pn' || 'prefix' || 'infix'
+                output = "#{cli.string} : #{cli.result}"
+                return output
+        elsif type == 'rpn' or type == 'postfix' or type == 'pn' or type == 'prefix' or type == 'infix'
                 cli = MathNotation.new(string,type)
-                return "#{cli.string} = #{cli.result}"
+                output = "#{cli.string} : #{cli.result}"
+                return output
         end
 end
 
@@ -37,8 +39,10 @@ if not options.empty?
                 File.open(options[:file]).each_line do |line|
                         puts(cli_eval(line,options[:type]))
                 end
+
         elsif options.has_key?(:expr)
                 puts(cli_eval(options[:expr],options[:type]))
+
         elsif options.has_key?(:type)
                 Repl.new("=>",options[:type])
         end

@@ -1,4 +1,5 @@
-require_relative "../lib/calculi"
+require_relative "../lib/lisp"
+require_relative "../lib/math"
 require "minitest/autorun"
 
 class TestLisp < MiniTest::Test
