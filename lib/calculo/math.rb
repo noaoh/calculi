@@ -1,6 +1,5 @@
-require_relative 'parse'
-require_relative 'shunting_yard'
-
+require 'parse'
+require 'shunting_yard'
 class MathNotation
         attr_accessor :type
         attr_accessor :string

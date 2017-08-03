@@ -1,5 +1,4 @@
-require_relative 'parse'
-
+require 'parse'
 class Lisp
         attr_accessor :string
         attr_accessor :type

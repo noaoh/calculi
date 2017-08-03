@@ -1,12 +1,10 @@
 #!/usr/bin/env ruby
 require 'optparse'
-require_relative '../lib/lisp'
-require_relative '../lib/math'
-require_relative '../lib/repl'
+require 'calculo'
 
 options = {}
 OptionParser.new do |opts|
-        opts.banner = "Usage: calculi.rb [options]"
+        opts.banner = "Usage: calculo.rb [options]"
         opts.on("-t","--type TYPE",String,"The type of expression to be computed") do |type|
                 options[:type] = type
         end

@@ -1,4 +1,4 @@
-# Calculi
+# Calculo
 A calculator specifically designed to support any kind of mathematical syntax
 you throw at it.
 

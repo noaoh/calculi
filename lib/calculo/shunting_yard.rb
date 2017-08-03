@@ -1,5 +1,3 @@
-require 'pry'
-
 def shunting_yard(infix_array)
         operators = {'+' => 2, '-' => 2, '*' => 3, '/' => 3, '>' => 4, '<' => 4, '=' => 4, '%' => 4, '**' => 4}
         rpn_expr = []
