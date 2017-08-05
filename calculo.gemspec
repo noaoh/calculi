@@ -12,5 +12,6 @@ Gem::Specification.new do |s|
         s.executables = ["calculo"]
         s.homepage = "https://github.com/noaoh/calculo"
         s.license = "GPLv3"
-        s.add_dependency('os')
+        s.add_runtime_dependency('os')
+        s.add_development_dependency('ocra')
 end

@@ -12,7 +12,7 @@ class Repl
                 @prompt = "[#{@history.length}]" + @og_prompt + " "
                 @type = type
                 clear_screen()
-                calculi_loop()
+                calculo_loop()
         end
 
         def clear_screen
@@ -23,7 +23,7 @@ class Repl
                 end
         end
 
-        def calculi_print(history)
+        def calculo_print(history)
                 history.each_with_index.map{|x,i| puts("#{i} : #{x}\n")}
         end
 
@@ -54,16 +54,16 @@ class Repl
                 elsif input.start_with?("history")
                         @history.push(input)
                         if input == "history"
-                                return calculi_print(@history)
+                                return calculo_print(@history)
                         else
                                 input_array = input.split(' ')
                                 input_range = input_array[-1]
                                 if input_range.length == 1
                                         return @history[input_range.to_i]
                                 elsif input_range.length == 4
-                                        return calculi_print(@history[(input_range.chars.first.to_i)..(input_range.chars.last.to_i)])
+                                        return calculo_print(@history[(input_range.chars.first.to_i)..(input_range.chars.last.to_i)])
                                 elsif input_range.length == 5
-                                        return calculi_print(@history[(input_range.chars.first.to_i)..(input_range.chars.drop(2).to_i)])
+                                        return calculo_print(@history[(input_range.chars.first.to_i)..(input_range.chars.drop(2).to_i)])
                                 end
                         end
 
@@ -77,27 +77,27 @@ class Repl
                         end
 
                 elsif input == "exit" or input == "quit"
-                        return "Exiting calculi!"
+                        return "Exiting calculo!"
 
                 else 
                         if @type == 'lisp' or @type == 'reverse-lisp' or @type == 'reverse'
                                repl_class = Lisp.new(input,@type)
-                               calculi_output = "#{repl_class.string} : #{repl_class.result}"
-                               @history.push(calculi_output)
-                               return calculi_output
+                               calculo_output = "#{repl_class.string} : #{repl_class.result}"
+                               @history.push(calculo_output)
+                               return calculo_output
                                        
                         elsif @type == 'postfix' or @type == 'infix' or @type == 'prefix' or @type == 'pn' or @type == 'rpn'
                                repl_class = MathNotation.new(input,@type)
-                               calculi_output = "#{repl_class.string} : #{repl_class.result}"
-                               @history.push(calculi_output)
-                               return calculi_output
+                               calculo_output = "#{repl_class.string} : #{repl_class.result}"
+                               @history.push(calculo_output)
+                               return calculo_output
                        end
                 end
         end
 
-        def calculi_loop(output="Welcome to calculi!")
+        def calculo_loop(output="Welcome to calculo!")
                 input = nil
-                while output != "Exiting calculi!"
+                while output != "Exiting calculo!"
                         puts(output)
                         @prompt = "[#{@history.length}]" + @og_prompt + " "
                         print(@prompt)

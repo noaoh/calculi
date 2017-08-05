@@ -1,7 +1,7 @@
 require 'rake/testtask'
 
-Rake::TestTask.new do |t|
-        t.libs << 'test'
+task :test do
+        ruby "test/test.rb"
 end
 
 desc "Run tests"
