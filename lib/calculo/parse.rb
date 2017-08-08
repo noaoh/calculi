@@ -6,8 +6,8 @@ def parse(string)
         # Fourth regex converts to the exponent operator used in ruby
         # split seperates the characters based on a space
 
-        op_re = Regexp.new(/([^\d\w\s\-\.])/)
-        dig_op_re = Regexp.new(/\d[^\d\w\s\.]+/)
+        op_re = Regexp.new(/([^\d\w\s\-])/)
+        dig_op_re = Regexp.new(/\d[^\d\w\s]+/)
         dbl_space_re = Regexp.new(/\s{2,}/)
         exp_re = Regexp.new(/\^/)
         dig_re = Regexp.new(/\d+/)
