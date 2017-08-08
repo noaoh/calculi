@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
         s.name = "calculo"
-        s.version = "1.0.1"
-        s.date = "2017-08-03"
+        s.version = "1.0.2"
+        s.date = "2017-08-08"
         s.required_ruby_version = '>=2.0.0'
         s.summary = "A calculator for the command line"
         s.description = "A calculator for the command line supporting postfix, prefix, infix, and lisp notation (plus a REPL)"
