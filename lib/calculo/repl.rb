@@ -29,8 +29,8 @@ class Repl
 
         def repl_eval(input)
                 # syntax for changing prompt/type is:
-                # set prompt/type = 'foo'
-                # or set prompt/type 'foo'
+                # set prompt/type = foo
+                # or set prompt/type foo
                 if input.start_with?("set","change")
                         @history.push(input)
                         input_array = input.split(' ')
