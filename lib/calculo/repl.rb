@@ -1,3 +1,4 @@
+require 'parse'
 require 'IO/console'
 require 'os'
 require 'pry'
@@ -8,6 +9,8 @@ class Repl
         attr_accessor :type
         def initialize(prompt,type)
                 @history = []
+                @vars = {}
+                @stack = []
                 @og_prompt = prompt
                 @prompt = "[#{@history.length}]" + @og_prompt + " "
                 @type = type
@@ -84,12 +87,14 @@ class Repl
                                repl_class = Lisp.new(input,@type)
                                calculo_output = "#{repl_class.string} : #{repl_class.result}"
                                @history.push(calculo_output)
+                               @stack.push(repl_class.result)
                                return calculo_output
                                        
                         elsif @type == 'postfix' or @type == 'infix' or @type == 'prefix' or @type == 'pn' or @type == 'rpn'
                                repl_class = MathNotation.new(input,@type)
                                calculo_output = "#{repl_class.string} : #{repl_class.result}"
                                @history.push(calculo_output)
+                               @stack.push(repl_class.result)
                                return calculo_output
                        end
                 end
