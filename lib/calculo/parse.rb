@@ -32,28 +32,34 @@ Operators = {
 }
 
 Command = Struct.new(:type,:arg,:desc,:english)
-Commands = {
+
+StackCommands = {
         "p" => Command.new(:stack,"p (NUM)","Print top num values from stack, without changing stack","PRINT")
         "n" => Command.new(:stack,"n (NUM)","Print top num values from stack, and changes stack", "PRINTPOP")
         "P" => Command.new(:stack,"P (NUM)","Pops top num off stack, without printing them", "POP")
         "f" => Command.new(:stack,"f (NUM)","Prints entire contents of stack w/o altering anything","PRINTALL")
         "c" => Command.new(:stack,"c","Clears the stack","CLEAR")
         "r" => Command.new(:stack,"r","Swaps the order of the top two values on the stack","SWAP")
+}
 
+ReplCommands = {
         ";" => Command.new(:repl,";","Represents a new line, allows for multiple statements on same line","NEWLINE")
         "history" => Command.new(:repl,"history (start..end)","Prints the entire history of commands, unless a range is given","HISTORY")
         "clear" => Command.new(:repl,"clear (history)","Clears the screen or the history","CLEAR")
         "exit" => Command.new(:repl,"exit","Exit Calculi","EXIT")
         "quit" => Command.new(:repl,"quit","Quit Calculi","QUIT")
         "help" => Command.new(:repl,"help (command)","Displays help for the program or the command","HELP")
+}
 
-        "=" => Command.new(:var,"variable = NUM","Creates a variable","VAR")
+VariableCommands = {
+        "=" => Command.new(:var,"variable = NUM","Creates a variable with value NUM","VAR")
         "+=" => Command.new(:var,"variable += NUM","Adds the NUM to a variable","VARADD")
         "-=" => Command.new(:var,"variable -= NUM","Subtracts the NUM from the variable","VARSUB")
         "*=" => Command.new(:var,"variable *= NUM","Multiplies the variable by the NUM","VARMUL")
         "/=" => Command.new(:var,"variable /= NUM","Divides the variable by the NUM","VARDIV")
+        "**=" => Command.new(:var,"variable **= NUM","Raises the variable to the NUM power","VARPOW")
+        "%=" => Command.new(:var,"variable %= NUM","Modulos the variable by the NUM","VARMOD")
 }
-
 
 def parse(string)
         # First regex puts a space after a parenthesis/math operation,
@@ -64,10 +70,15 @@ def parse(string)
         # split seperates the characters based on a space
 
         op_str = '('
-        Operators[:re_list].slice(0..-4).each{|x| op_str += "\\#{x}|"}
-        Operators[:re_list].take(3).each{|x| op_str += "#{x}"}
-        op_str += ')'
-        op_re = Regexp.new(op_re_string)
+        Operators[:re_list].each{|operator|
+                if /[a-z]+/.match(operator)
+                        op_str += "#{x}|"
+                else
+                        op_str += "\\#{x}|"
+                end
+        }
+        op_str = op_str[0..-2] + ')'
+        op_re = Regexp.new(op_str)
         dig_str = '\d'
         dig_op_str = dig_str + op_re_str + '+'
         dig_op_re = Regexp.new(dig_op_str)
@@ -90,15 +101,23 @@ def lexer(array)
        assoc_array = [] 
        category = 0
        item = 1
-       array.each{ |elem|
+       array.each{|elem|
                if Operators.has_key?(elem)
-                       assoc_array.push(["Operator",elem])
-               elsif Commands.has_key?(elem)
-                       assoc_array.push(["Command",elem])
-               elsif /\d+/.match(elem)
-                       assoc_array.push(["Number",elem])
+                       assoc_array.push([:Operator,elem])
+
+               elsif VariableCommands.has_key?(elem)
+                       assoc_array.push([:VariableCommand,elem])
+
+               elsif StackCommands.has_key?(elem)
+                       assoc_array.push([:StackCommand,elem])
+
+               elsif ReplCommands.has_key?(elem)
+                       assoc_arary.push([:ReplCommand,elem])
+
+               elsif /\d+/.match(elem.to_s)
+                       assoc_array.push([:Number,elem])
                else
-                       assoc_array.push(["Nil",elem])
+                       assoc_array.push([nil,elem])
                end
        }
        return assoc_array
