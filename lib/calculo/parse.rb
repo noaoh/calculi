@@ -6,7 +6,7 @@ class Operator
         end
 
         #the < for operators
-        def op_<(other)
+        def op_lt(other)
                 if left_associative?
                         precedence <= other.precedence
                 else
@@ -16,48 +16,49 @@ class Operator
 end
 
 Operators = {
-        :re_list => ["+","*","/","%","<",">","^","==","(",")","abs|","ceil|","floor"]
-        "+" => Operator.new(2, :left, "ADD", "+")
-        "-" => Operator.new(2, :left, "SUB", "-")
-        "*" => Operator.new(3, :left, "MUL", "*")
-        "/" => Operator.new(3, :left, "DIV", "/")
-        "%" => Operator.new(3, :left, "MOD", "%")
-        "<" => Operator.new(4, :left, "LT", "<")
-        ">" => Operator.new(4, :left, "GT", ">")
-        "^" => Operator.new(4, :right, "EXP", "**")
-        "==" => Operator.new(4, :none, "EQ?", "eql?")
-        "abs" => Operator.new(4, :none, "ABS", "abs")
-        "ceil" => Operator.new(4, :none, "CEIL", "ceil")
-        "floor" => Operator.new(4, :none, "FLR", "floor")
+        :re_list => ["+","*","/","%","<",">","^","==","(",")","abs","ceil","floor"],
+        "+" => Operator.new(2, :left, "ADD", "+"),
+        "-" => Operator.new(2, :left, "SUB", "-"),
+        "*" => Operator.new(3, :left, "MUL", "*"),
+        "/" => Operator.new(3, :left, "DIV", "/"),
+        "%" => Operator.new(3, :left, "MOD", "%"),
+        "<" => Operator.new(4, :left, "LT", "<"),
+        ">" => Operator.new(4, :left, "GT", ">"),
+        "**" => Operator.new(4, :right, "EXP", "**"),
+        "==" => Operator.new(4, :none, "EQ?", "eql?"),
+        "abs" => Operator.new(4, :none, "ABS", "abs"),
+        "ceil" => Operator.new(4, :none, "CEIL", "ceil"),
+        "floor" => Operator.new(4, :none, "FLR", "floor"),
 }
 
-Command = Struct.new(:type,:arg,:desc,:english)
+Command = Struct.new(:type, :arg, :desc, :english)
 
 StackCommands = {
-        "p" => Command.new(:stack,"p (NUM)","Print top num values from stack, without changing stack","PRINT")
-        "n" => Command.new(:stack,"n (NUM)","Print top num values from stack, and changes stack", "PRINTPOP")
-        "P" => Command.new(:stack,"P (NUM)","Pops top num off stack, without printing them", "POP")
-        "f" => Command.new(:stack,"f (NUM)","Prints entire contents of stack w/o altering anything","PRINTALL")
-        "c" => Command.new(:stack,"c","Clears the stack","CLEAR")
+        "p" => Command.new(:stack,"p (NUM)","Print top num values from stack, without changing stack","PRINT"),
+        "n" => Command.new(:stack,"n (NUM)","Print top num values from stack, and changes stack", "PRINTPOP"),
+        "P" => Command.new(:stack,"P (NUM)","Pops top num off stack, without printing them", "POP"),
+        "f" => Command.new(:stack,"f (NUM)","Prints entire contents of stack w/o altering anything","PRINTALL"),
+        "c" => Command.new(:stack,"c","Clears the stack","CLEAR"),
         "r" => Command.new(:stack,"r","Swaps the order of the top two values on the stack","SWAP")
 }
 
 ReplCommands = {
-        ";" => Command.new(:repl,";","Represents a new line, allows for multiple statements on same line","NEWLINE")
-        "history" => Command.new(:repl,"history (start..end)","Prints the entire history of commands, unless a range is given","HISTORY")
-        "clear" => Command.new(:repl,"clear (history)","Clears the screen or the history","CLEAR")
-        "exit" => Command.new(:repl,"exit","Exit Calculi","EXIT")
-        "quit" => Command.new(:repl,"quit","Quit Calculi","QUIT")
-        "help" => Command.new(:repl,"help (command)","Displays help for the program or the command","HELP")
+        ";" => Command.new(:repl,";","Represents a new line, allows for multiple statements on same line","NEWLINE"),
+        "history" => Command.new(:repl,"history (start..end)","Prints the entire history of commands, unless a range is given","HISTORY"),
+        "clear" => Command.new(:repl,"clear (history)","Clears the screen or the history","CLEAR"),
+        "exit" => Command.new(:repl,"exit","Exit Calculi","EXIT"),
+        "quit" => Command.new(:repl,"quit","Quit Calculi","QUIT"),
+        "help" => Command.new(:repl,"help (command)","Displays help for the program or the command","HELP"),
+        "tutorial" => Command.new(:repl,"tutorial","Runs a brief tutorial showcasing this program's features","TUTORIAL")
 }
 
 VariableCommands = {
-        "=" => Command.new(:var,"variable = NUM","Creates a variable with value NUM","VAR")
-        "+=" => Command.new(:var,"variable += NUM","Adds the NUM to a variable","VARADD")
-        "-=" => Command.new(:var,"variable -= NUM","Subtracts the NUM from the variable","VARSUB")
-        "*=" => Command.new(:var,"variable *= NUM","Multiplies the variable by the NUM","VARMUL")
-        "/=" => Command.new(:var,"variable /= NUM","Divides the variable by the NUM","VARDIV")
-        "**=" => Command.new(:var,"variable **= NUM","Raises the variable to the NUM power","VARPOW")
+        "=" => Command.new(:var,"variable = NUM","Creates a variable with value NUM","VAR"),
+        "+=" => Command.new(:var,"variable += NUM","Adds the NUM to a variable","VARADD"),
+        "-=" => Command.new(:var,"variable -= NUM","Subtracts the NUM from the variable","VARSUB"),
+        "*=" => Command.new(:var,"variable *= NUM","Multiplies the variable by the NUM","VARMUL"),
+        "/=" => Command.new(:var,"variable /= NUM","Divides the variable by the NUM","VARDIV"),
+        "^=" => Command.new(:var,"variable ^= NUM","Raises the variable to the NUM power","VARPOW"),
         "%=" => Command.new(:var,"variable %= NUM","Modulos the variable by the NUM","VARMOD")
 }
 
@@ -72,20 +73,20 @@ def parse(string)
         op_str = '('
         Operators[:re_list].each{|operator|
                 if /[a-z]+/.match(operator)
-                        op_str += "#{x}|"
+                        op_str += "#{operator}|"
                 else
-                        op_str += "\\#{x}|"
+                        op_str += "\\#{operator}|"
                 end
         }
         op_str = op_str[0..-2] + ')'
         op_re = Regexp.new(op_str)
         dig_str = '\d'
-        dig_op_str = dig_str + op_re_str + '+'
+        dig_op_str = dig_str + op_str + '+'
         dig_op_re = Regexp.new(dig_op_str)
         dig_re = Regexp.new(dig_str + '+')
 
         array = string.gsub(op_re,'\1 ')
-        array = array.gsub(dip_op_re){|s| s.chars.join(' ')}
+        array = array.gsub(dig_op_re){|s| s.chars.join(' ')}
         array = array.gsub('  ',' ')
         array = array.gsub('^','**')
         array = array.gsub('==', 'eql?')
@@ -98,28 +99,32 @@ def parse(string)
 end
 
 def lexer(array)
-       assoc_array = [] 
-       category = 0
-       item = 1
-       array.each{|elem|
-               if Operators.has_key?(elem)
-                       assoc_array.push([:Operator,elem])
+        assoc_array = [] 
+        array.each{|elem|
+                if elem == '(' 
+                        assoc_array.push([:LParen,elem])
 
-               elsif VariableCommands.has_key?(elem)
-                       assoc_array.push([:VariableCommand,elem])
+                elsif elem == ')'
+                        assoc_array.push([:RParen,elem])
 
-               elsif StackCommands.has_key?(elem)
-                       assoc_array.push([:StackCommand,elem])
+                elsif Operators.has_key?(elem)
+                        assoc_array.push([:Operator,elem])
 
-               elsif ReplCommands.has_key?(elem)
-                       assoc_arary.push([:ReplCommand,elem])
+                elsif VariableCommands.has_key?(elem)
+                        assoc_array.push([:VariableCommand,elem])
 
-               elsif /\d+/.match(elem.to_s)
-                       assoc_array.push([:Number,elem])
-               else
-                       assoc_array.push([nil,elem])
-               end
-       }
-       return assoc_array
+                elsif StackCommands.has_key?(elem)
+                        assoc_array.push([:StackCommand,elem])
+
+                elsif ReplCommands.has_key?(elem)
+                        assoc_array.push([:ReplCommand,elem])
+
+                elsif /\d+/.match(elem.to_s)
+                        assoc_array.push([:Number,elem])
+
+                else
+                        assoc_array.push([nil,elem])
+                end
+        }
+        return assoc_array
 end
-
