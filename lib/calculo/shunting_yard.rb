@@ -1,28 +1,36 @@
-def shunting_yard(infix_array)
-        operators = {'+' => 2, '-' => 2, '*' => 3, '/' => 3, '>' => 4, '<' => 4, '=' => 4, '%' => 4, '**' => 4}
+require_relative 'parse'
+require 'pry'
+
+def shunting_yard(assoc_infix_array)
         rpn_expr = []
         op_stack = []
 
-        infix_array.each do |item|
-                if operators.has_key?(item)
-                        op2 = op_stack.last
-                        if operators.has_key?(op2) and ((op2 == "**" and operators[item] < operators[op2]) or (op2 != "**" and operators[item] <= operators[op2]))
-                                rpn_expr.push(op_stack.pop)
+        assoc_infix_array.each{|category, item|
+                if category == :Operator
+                        unless op_stack.empty?
+                                op2 = op_stack.last.last
+                                if Operators.has_key?(op2) and Operators[item].op_lt(Operators[op2])
+                                        rpn_expr.push(op_stack.pop)
+                                end
                         end
-                        op_stack.push(item)
+                        op_stack.push([category, item])
 
-                elsif item == "("
-                        op_stack.push(item)
+                elsif category == :LParen
+                        op_stack.push([category, item])
 
-                elsif item == ")"
-                        until op_stack.last == "("
+                elsif category == :RParen
+                        until op_stack.last.last == "("
                                 rpn_expr.push(op_stack.pop)
+
                         end
                         op_stack.pop
-                else
-                        rpn_expr.push(item)
+
+
+
+                elsif category == :Number
+                        rpn_expr.push([category, item])
                 end
-        end
+        } 
 
         until op_stack.empty?
                 rpn_expr.push(op_stack.pop)
