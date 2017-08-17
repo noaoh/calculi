@@ -1,14 +1,14 @@
-require_relative "../lib/calculo/lisp"
-require_relative "../lib/calculo/math"
+require_relative "../lib/calculo/expr"
 require "minitest/autorun"
+require 'pry'
 
 class TestLisp < MiniTest::Test
         def setup
                 @type = "lisp"
                 @string = "( - ( + ( / 18 ( ^ 3 2 ) ) 12 ) 13 )"
-                @array = ["(", "-", "(", "+", "(", "/", 18.0, "(", "**", 3.0, 2.0, ")", ")", 12.0, ")", 13.0, ")"]
+                @assoc_array = [[:LParen,"("], [:Operator,"-"], [:LParen, "("], [:Operator, "+"], [:LParen, "("], [:Operator, "/"], [:Number, 18.0], [:LParen, "("], [:Operator, "**"], [:Number, 3.0], [:Number, 2.0], [:RParen, ")"], [:RParen, ")"], [:Number, 12.0], [:RParen, ")"], [:Number, 13.0], [:RParen, ")"]]
                 @result = 1
-                @Lisp = Lisp.new(@string, @type)
+                @Lisp = MathExpression.new(@string, @type)
         end
 
         def test_type_access
@@ -20,7 +20,7 @@ class TestLisp < MiniTest::Test
         end
 
         def test_array_access
-                assert_equal(@array, @Lisp.array)
+                assert_equal(@assoc_array, @Lisp.assoc_array)
         end
 
         def test_results
@@ -32,9 +32,9 @@ class TestReverseLisp < MiniTest::Test
         def setup
                 @type = "reverse-lisp"
                 @string = "( 13 ( 12 ( ( 2 3 ^ ) 18 / ) + ) - )"
-                @array = ["(", 13.0, "(", 12.0, "(", "(", 2.0, 3.0, "**", ")", 18.0, "/", ")", "+", ")", "-", ")"]
+                @assoc_array = [[:LParen, "("], [:Number, 13.0], [:LParen, "("], [:Number, 12.0], [:LParen, "("], [:LParen, "("], [:Number, 2.0], [:Number, 3.0], [:Operator, "**"], [:RParen, ")"], [:Number, 18.0], [:Operator, "/"], [:RParen, ")"], [:Operator, "+"], [:RParen, ")"], [:Operator, "-"], [:RParen, ")"]]
                 @result = 1
-                @ReverseLisp = Lisp.new(@string, @type)
+                @ReverseLisp = MathExpression.new(@string, @type)
         end
 
         def test_type_access
@@ -46,7 +46,7 @@ class TestReverseLisp < MiniTest::Test
         end
 
         def test_array_access
-                assert_equal(@array, @ReverseLisp.array)
+                assert_equal(@assoc_array, @ReverseLisp.assoc_array)
         end
 
         def test_results
@@ -58,9 +58,9 @@ class TestPN < MiniTest::Test
         def setup
                 @type = "pn"
                 @string = "- + / 18 ^ 3 2 12 13"
-                @array = ['-', '+', '/', 18.0, '**', 3.0, 2.0, 12.0, 13.0]
+                @assoc_array = [[:Operator, '-'], [:Operator, '+'], [:Operator, '/'], [:Number, 18.0], [:Operator, '**'], [:Number, 3.0],[:Number, 2.0],[:Number, 12.0], [:Number, 13.0]]
                 @result = 1
-                @PN = MathNotation.new(@string, @type)
+                @PN = MathExpression.new(@string, @type)
         end
 
         def test_type_access
@@ -72,7 +72,7 @@ class TestPN < MiniTest::Test
         end
 
         def test_array_access
-                assert_equal(@array, @PN.array)
+                assert_equal(@assoc_array, @PN.assoc_array)
         end
 
         def test_result_access
@@ -84,9 +84,9 @@ class TestRPN < MiniTest::Test
         def setup
                 @type = "rpn"
                 @string = "12 18 3 2 ^ / 13 - +"
-                @array = [12.0, 18.0, 3.0, 2.0, "**", "/", 13.0, "-", "+"]
+                @assoc_array = [[:Number, 12.0], [:Number, 18.0], [:Number, 3.0],[:Number, 2.0], [:Operator, "**"], [:Operator, "/"], [:Number, 13.0], [:Operator, "-"], [:Operator, "+"]]
                 @result = 1
-                @RPN = MathNotation.new(@string, @type)
+                @RPN = MathExpression.new(@string, @type)
         end
 
         def test_string_access
@@ -94,7 +94,7 @@ class TestRPN < MiniTest::Test
         end
 
         def test_array_access
-                assert_equal(@array, @RPN.array)
+                assert_equal(@assoc_array, @RPN.assoc_array)
         end
 
         def test_result_access
@@ -106,9 +106,9 @@ class TestInfix < MiniTest::Test
         def setup
                 @type = "rpn" 
                 @string = "12 + 18 / ( 3 ^ 2 ) - 13"
-                @rpn_array = [12.0, 18.0, 3.0, 2.0, "**", "/", 13.0, "-", "+"]
+                @assoc_array = [[:Number, 12.0], [:Number, 18.0], [:Number, 3.0],[:Number, 2.0], [:Operator, "**"], [:Operator, "/"], [:Number, 13.0], [:Operator, "-"], [:Operator, "+"]]
                 @result = 1
-                @Infix = MathNotation.new(@string, "infix")
+                @Infix = MathExpression.new(@string, "infix")
         end
 
         def test_type
@@ -120,7 +120,7 @@ class TestInfix < MiniTest::Test
         end
 
         def test_shunting_yard
-                assert_equal(@rpn_array, @Infix.array)
+                assert_equal(@assoc_array, @Infix.assoc_array)
         end
 
         def test_result_access
