@@ -1,4 +1,4 @@
-require 'parse'
+require_relative 'parse'
 require 'IO/console'
 require 'os'
 require 'pry'
